@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { DAILY_PAR, DIFFICULTY_PAR, generatePuzzle, type Difficulty } from "./generator.ts";
+import { DAILY_PAR, DIFFICULTY_PAR, generatePuzzle, sharesPosition, type Difficulty } from "./generator.ts";
 import { parseWordList, WordGraph } from "./ladder.ts";
 import { seededRng } from "./rng.ts";
 
@@ -19,6 +19,7 @@ describe("generatePuzzle", () => {
       const par = graph.par(puzzle.origin, puzzle.target)!;
       expect(par).toBeGreaterThanOrEqual(range.min);
       expect(par).toBeLessThanOrEqual(range.max);
+      expect(sharesPosition(puzzle.origin, puzzle.target)).toBe(false);
       // A par-length ladder exists through common words only.
       expect(graph.shortestPath(puzzle.origin, puzzle.target, commonSet)).toHaveLength(par + 1);
     }

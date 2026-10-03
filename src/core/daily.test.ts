@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { dailyPuzzle, dayNumber, decodePuzzle } from "./daily.ts";
-import { DAILY_PAR } from "./generator.ts";
+import { DAILY_PAR, sharesPosition } from "./generator.ts";
 import { parseWordList, WordGraph } from "./ladder.ts";
 
 describe("dayNumber", () => {
@@ -35,6 +35,13 @@ describe("bundled daily list", () => {
 
   it("covers about three years", () => {
     expect(daily.length).toBeGreaterThanOrEqual(365 * 3);
+  });
+
+  it("never starts with a letter already matching the target", () => {
+    for (const entry of daily) {
+      const { origin, target } = decodePuzzle(entry);
+      expect(sharesPosition(origin, target), entry).toBe(false);
+    }
   });
 
   it("only contains solvable common-word puzzles within daily par", () => {

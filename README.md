@@ -3,12 +3,13 @@
 A daily word-ladder game: climb from a start word to a target word, changing one letter at a time.
 
 ```
-STAIR → STAID → STAND → STANK → STACK   (par 4)
+CHASE → CHOSE → CHORE → SHORE → SWORE → SWORN   (par 5)
 ```
 
 ## Rules
 
-- Origin and target are common 5-letter words.
+- Origin and target are common 5-letter words that share no letter position, so no tile starts
+  green and par is always at least 5.
 - Each step changes exactly one letter in place and must be a valid word.
 - Revisiting words is allowed. There is no undo and no step limit — every accepted step counts.
 - The score is total steps vs. **par**: the shortest possible ladder (BFS over the word graph).
@@ -19,9 +20,10 @@ STAIR → STAID → STAND → STANK → STACK   (par 4)
 ## Modes
 
 - **Daily** — the same puzzle for everyone, from a precomputed list (`src/data/daily.json`) indexed by
-  local calendar day since `LAUNCH_DATE` (`src/core/daily.ts`). Par 4–6, and at least one par-length
-  ladder uses only common words. Rolls over at local midnight; cycles if the list runs out.
-- **Practice** — unlimited puzzles generated in the browser. Easy (par 3–4), Medium (5–6), Hard (7–8).
+  local calendar day since `LAUNCH_DATE` (`src/core/daily.ts`). Par 5–6, and at least one par-length
+  ladder uses only common words. A target isn't reused within 365 days. Rolls over at local midnight;
+  cycles if the list runs out.
+- **Practice** — unlimited puzzles generated in the browser. Easy (par 5), Medium (6), Hard (7–8).
 
 Daily progress, streaks and an over-par distribution are stored in `localStorage` (`ladderle:*`).
 
