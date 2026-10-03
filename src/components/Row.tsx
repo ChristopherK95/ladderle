@@ -11,6 +11,8 @@ interface RowProps {
   label?: string;
   shake?: boolean;
   small?: boolean;
+  /** Plays the entrance animation for a freshly submitted step. */
+  reveal?: boolean;
 }
 
 export default function Row(props: RowProps) {
@@ -33,7 +35,7 @@ export default function Row(props: RowProps) {
   };
 
   return (
-    <div class="row" classList={{ shake: props.shake, small: props.small, [variant()]: true }}>
+    <div class="row" classList={{ shake: props.shake, small: props.small, reveal: props.reveal, [variant()]: true }}>
       {props.label && <span class="row-label">{props.label}</span>}
       <div class="tiles" role="group" aria-label={props.label ?? props.word.toUpperCase()}>
         <For each={letters()}>
@@ -41,6 +43,7 @@ export default function Row(props: RowProps) {
             <div
               class={`tile ${tileState(letter, i())}`}
               classList={{ changed: props.changed === i() }}
+              style={{ "--i": i() }}
               aria-label={tileLabel(letter.toUpperCase(), i())}
             >
               {letter}

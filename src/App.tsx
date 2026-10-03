@@ -80,7 +80,8 @@ export default function App() {
         ),
       );
     }
-    setTimeout(() => setModal("result"), 700);
+    // A win waits for the final row's reveal animation to finish.
+    setTimeout(() => setModal("result"), next.status === "won" ? 1400 : 700);
   }
 
   function submit() {
@@ -103,8 +104,15 @@ export default function App() {
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
     const key = e.key.toLowerCase();
+    // Ctrl+Backspace (Alt+Backspace on macOS) clears the whole word, like deleting a word in a text field.
+    if (key === "backspace" && (e.ctrlKey || e.altKey) && !e.metaKey) {
+      if (modal() || finished()) return;
+      e.preventDefault();
+      setInput("");
+      return;
+    }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (key === "enter" || key === "backspace" || /^[a-z]$/.test(key)) {
       if (modal()) return;
       e.preventDefault();
