@@ -43,7 +43,8 @@ export default function App() {
   const [stats, setStats] = createSignal(load("stats", emptyStats()));
   const [input, setInput] = createSignal("");
   const [shake, setShake] = createSignal(false);
-  const [toast, setToast] = createSignal<string | null>(null);
+  /** `top` pins the toast to a viewport offset; otherwise it uses the default position. */
+  const [toast, setToast] = createSignal<{ message: string; top?: number } | null>(null);
   const [modal, setModal] = createSignal<"help" | "result" | null>(load("seenHelp", false) ? null : "help");
 
   createEffect(() => save("daily", { day: today, game: dailyGame() } satisfies SavedDaily));
@@ -61,9 +62,10 @@ export default function App() {
   const finished = () => game().status !== "playing";
 
   let toastTimer: ReturnType<typeof setTimeout> | undefined;
-  function showToast(message: string, ms = 1500) {
+  /** Shows a message, placed just below `anchor` when given so it doesn't cover it. */
+  function showToast(message: string, anchor?: Element | null, ms = 1500) {
     clearTimeout(toastTimer);
-    setToast(message);
+    setToast({ message, top: anchor ? anchor.getBoundingClientRect().bottom + 8 : undefined });
     toastTimer = setTimeout(() => setToast(null), ms);
   }
 
@@ -87,7 +89,7 @@ export default function App() {
   function submit() {
     const result = submitStep(game(), input(), validWords);
     if (!result.ok) {
-      showToast(STEP_ERROR_MESSAGES[result.error]);
+      showToast(STEP_ERROR_MESSAGES[result.error], document.querySelector(".row.active"));
       setShake(true);
       setTimeout(() => setShake(false), 500);
       return;
@@ -216,9 +218,11 @@ export default function App() {
       <Keyboard onKey={onKey} />
 
       <Show when={toast()}>
-        <div class="toast" role="status">
-          {toast()}
-        </div>
+        {(t) => (
+          <div class="toast" role="status" style={{ top: t().top === undefined ? undefined : `${t().top}px` }}>
+            {t().message}
+          </div>
+        )}
       </Show>
 
       <Show when={modal() === "help"}>
